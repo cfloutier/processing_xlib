@@ -9,7 +9,7 @@ DataGUI dataGui;
 PGraphics current_graphics;
 ControlP5 cp5;
 
-ArrayList<PVector[]> lines = new ArrayList<PVector[]>();
+PolylineGroup lineGroup = new PolylineGroup();
 
 void setup()
 {
@@ -52,16 +52,7 @@ void draw()
   //                         data.page.clip_width, data.page.clip_height);
   //}
 
-  float[] clipped = new float[4];
-  for (PVector[] l : lines) {
-    if (data.page.clipping) {
-      if (clipLineToCenteredRect(l[0].x, l[0].y, l[1].x, l[1].y,
-                                 0, 0, data.page.clip_width, data.page.clip_height, clipped))
-        current_graphics.line(clipped[0], clipped[1], clipped[2], clipped[3]);
-    } else {
-      current_graphics.line(l[0].x, l[0].y, l[1].x, l[1].y);
-    }
-  }
+  lineGroup.draw(data.page.clipping, data.page.clip_width, data.page.clip_height);
 
   end_draw();
 
@@ -70,33 +61,24 @@ void draw()
 
 void buildLines()
 {
-  lines.clear();
-  BoundingBox bbox = new BoundingBox();
+  lineGroup.clear();
   randomSeed((long)data.circle.seed);
-  float r  = data.circle.circle_size / 2.0;
-  float ar = data.circle.aspect_ratio;
-  float rx = r * ar;
-  float ry = r / ar;
-  int n = (int)data.circle.nb_lines;
-  for (int i = 0; i < n; i++)
-  {
-    float a1 = random(TWO_PI);
-    float a2 = random(TWO_PI);
-    PVector p1 = new PVector(cos(a1) * rx, sin(a1) * ry);
-    PVector p2 = new PVector(cos(a2) * rx, sin(a2) * ry);
-    lines.add(new PVector[] { p1, p2 });
-  }
+  float rx = (data.circle.circle_size / 2.0) * data.circle.aspect_ratio;
+  float ry = (data.circle.circle_size / 2.0) / data.circle.aspect_ratio;
+  int nPoly   = (int)data.circle.nb_polylines;
+  int ptsMin  = max(2, (int)data.circle.nb_points_min);
+  int ptsMax  = max(ptsMin, (int)data.circle.nb_points_max);
 
-  // Bbox based on clip rect when active, otherwise on drawn content
-  if (data.page.clipping) {
-    bbox.addPoint(new PVector(-data.page.clip_width / 2, -data.page.clip_height / 2));
-    bbox.addPoint(new PVector( data.page.clip_width / 2,  data.page.clip_height / 2));
-  } else {
-    float[] clipped = new float[4];
-    for (PVector[] l : lines) {
-      bbox.addPoint(l[0]);
-      bbox.addPoint(l[1]);
+  for (int i = 0; i < nPoly; i++)
+  {
+    int nPts = (int)random(ptsMin, ptsMax + 1);
+    Polyline seg = new Polyline();
+    for (int j = 0; j < nPts; j++)
+    {
+      float a = random(TWO_PI);
+      seg.addPoint(new PVector(cos(a) * rx, sin(a) * ry));
     }
+    lineGroup.add(seg);
   }
-  file_ui.updateExportScale(bbox);
+  file_ui.updateExportScale(lineGroup.getBoundingBox(data.page.clipping, data.page.clip_width, data.page.clip_height));
 }

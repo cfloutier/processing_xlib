@@ -1,12 +1,26 @@
 String get_xlib_version()
 {
-  return "2.2.17";
+  return "2.2.19";
 }
 
 
 /*
 
  # CHANGELOG
+
+ ## [2.2.19] - 2026-05-10
+ - xLib_Polyline: added getBoundingBox() to Polyline class
+ - xLib_Polyline: added PolylineGroup class — manages a list of Polylines with integrated clipping (clipLineToCenteredRect) and bounding box computation
+ - processing_xlib: switched to PolylineGroup for drawing and bbox — clipping logic no longer duplicated in sketch
+ - processing_xlib: buildLines() generates N polylines with random point count (nb_points_min to nb_points_max) on the ellipse
+ - processing_xlib: replaced nb_lines with nb_polylines, nb_points_min, nb_points_max parameters
+
+ ## [2.2.18] - 2026-05-10
+ - processing_xlib: bbox calculated from actual visible content (clipped segments) instead of raw clip rect
+ - processing_xlib: shouldRotate now based on real visible content → correct orientation with clipping active
+ - processing_xlib: page.changed triggers buildLines() so bbox/scale update when clip dimensions change
+ - processing_xlib: draw() uses clipLineToCenteredRect() when clipping is active
+ - processing_xlib: debug clip rect draw available (commented out) in draw()
 
  ## [2.2.17] - 2026-05-10
  - xLib_ExportUtils: export canvas now uses real paper dimensions (A4/A3/A2) instead of screen window size
