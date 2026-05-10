@@ -1,12 +1,21 @@
 String get_xlib_version()
 {
-  return "2.2.16";
+  return "2.2.17";
 }
 
 
 /*
 
  # CHANGELOG
+
+ ## [2.2.17] - 2026-05-10
+ - xLib_ExportUtils: export canvas now uses real paper dimensions (A4/A3/A2) instead of screen window size
+ - xLib_FileUI: translate(W/2, H/2) applied to PGraphics in export mode to centre content, matching screen mode
+ - xLib_FileUI: export scale and rotation recalculated at export time (not cached from buildLines) so margin/format changes are always reflected
+ - xLib_FileUI: stroke colour applied to PGraphics in export mode
+ - processing_xlib: buildLines() now computes BoundingBox and calls file_ui.updateExportScale(bbox)
+ - processing_xlib: draw() uses current_graphics.line() instead of bare line() so SVG/PDF output is not empty
+ - xLib_ExportUtils: printExportDebugInfo() extended with margin, canvas size and usable area
 
  ## [2.2.16] - 2026-05-10
  - processing_xlib: added standalone example sketch to test xLib independently

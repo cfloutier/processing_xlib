@@ -10,7 +10,7 @@ class DataGUI extends MainPanel
   public DataGUI(CircleLinesData data)
   {
     this.data = data;
-    file_ui   = new FileGUI(data);
+    file_ui   = new FileGUI(data, true);
     style_ui  = new StyleGUI(data.style);
     circle_ui = new CircleGUI(data.circle);
   }
