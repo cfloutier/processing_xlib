@@ -1,0 +1,21 @@
+{
+  "Page": {
+    "global_scale": 1.0,
+    "clipping": false,
+    "clip_width": 800.0,
+    "clip_height": 600.0,
+    "paper_format": 0,
+    "margin": 2
+  },
+  "Style": {
+    "backgroundColor": -16777216,
+    "lineColor": -1,
+    "lineWidth": 1.0
+  },
+  "Circle": {
+    "nb_lines": 100.0,
+    "circle_size": 400.0,
+    "aspect_ratio": 1.0,
+    "seed": 42
+  }
+}

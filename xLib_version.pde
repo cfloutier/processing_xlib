@@ -1,12 +1,19 @@
 String get_xlib_version()
 {
-  return "2.2.15";
+  return "2.2.16";
 }
 
 
 /*
 
  # CHANGELOG
+
+ ## [2.2.16] - 2026-05-10
+ - processing_xlib: added standalone example sketch to test xLib independently
+  - DataCircle — draws random chord lines inscribed in an ellipse (nb_lines, circle_size, aspect_ratio, seed)
+  - CircleGUI — three sliders: Nb Lines, Circle Size, Aspect Ratio (0.1→5.0; 1.0 = circle, >1 horizontal, <1 vertical)
+  -  DataGUI — three tabs: Files, Style, Circle
+  -  Settings/default.json — 100 lines, size 400, aspect ratio 1.0, black background / white lines
 
  ## [2.2.15] - 2026-05-10
  - xLib_FileUI: FileGUI constructor takes optional boolean show_clipping (default false) — hides clipping controls in projects that don't use it
