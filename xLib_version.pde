@@ -1,12 +1,16 @@
 String get_xlib_version()
 {
-  return "2.2.16";
+  return "2.2.17";
 }
 
 
 /*
 
  # CHANGELOG
+
+ ## [2.2.17] - 2026-05-18
+ - xLib_Polyline: added getBoundingBox() method to calculate the bounding box of a polyline, used for clipping and export.
+ - xLib_Polyline: added PolylineGroup class to manage groups of polylines with integrated clipping and bounding box support.
 
  ## [2.2.16] - 2026-05-18
  - xLib_Image: renamed blurred_image to transformed_image to reflect that it may also include contrast changes (TODO), not just blur 
