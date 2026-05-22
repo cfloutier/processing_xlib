@@ -1,12 +1,15 @@
 String get_xlib_version()
 {
-  return "2.2.19";
+  return "2.2.20";
 }
 
 
 /*
 
  # CHANGELOG
+
+ ## [2.2.20] - 2026-05-22
+ - processing_xlib: création du fichier .github/copilot-instructions.md avec le contexte xLib (workflow, projets synchronisés, scripts)
 
  ## [2.2.19] - 2026-05-10
  - xLib_Polyline: added getBoundingBox() to Polyline class
