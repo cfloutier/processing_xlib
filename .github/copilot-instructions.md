@@ -10,3 +10,25 @@
   - `pull-from-projects.ps1` — ramène les modifs des projets vers le repo central
   - `push-to-projects.ps1` — pousse les modifs du repo central vers les projets
   - `projects.ps1` — liste des projets cibles
+
+## Export SVG direct (v3.0.0)
+
+- `writeSVGDirect()` dans `xLib_ExportUtils.pde` — écrit l'SVG en pur Java sans le renderer Processing
+  - Plus rapide, progression console toutes les 10%, AxiDraw-compatible nativement
+  - Fallback automatique vers renderer Processing si `export_group == null` ou `PAPER_NONE`
+  - Bouton "SVG (Processing)" dans le GUI pour forcer l'ancien mode
+  - Export PDF supprimé du GUI
+
+- **Connexion dans un sketch** — une ligne dans `setup()` après `setupControls()` :
+  ```java
+  file_ui.export_group = lineGroup; // référence au PolylineGroup du sketch
+  ```
+
+- **Transform** : auto-centrage via bbox, scale `export_scale * (25.4/96)`, rotation -90deg optionnelle
+- **stroke_mm** = `data.style.lineWidth * export_scale * (25.4/96)`
+
+- **Adaptation par sketch (TODO)** :
+  - `spiral`, `perlin_mountains` — vérifier nom du PolylineGroup dans le générateur
+  - `image_lines` — `file_ui.export_group = generator.group;`
+  - `image_dots` — pas de PolylineGroup, fallback auto Processing SVG
+  - `gravity` — non adapté à l'export pour l'instant
