@@ -24,6 +24,8 @@ void setup()
 
   data.LoadSettings("./Settings/default.json");
   dataGui.setGUIValues();
+
+  file_ui.export_group = lineGroup;  // enable direct SVG export
 }
 
 void setupControls()
@@ -62,23 +64,25 @@ void draw()
 void buildLines()
 {
   lineGroup.clear();
-  randomSeed((long)data.circle.seed);
-  float rx = (data.circle.circle_size / 2.0) * data.circle.aspect_ratio;
-  float ry = (data.circle.circle_size / 2.0) / data.circle.aspect_ratio;
-  int nPoly   = (int)data.circle.nb_polylines;
-  int ptsMin  = max(2, (int)data.circle.nb_points_min);
-  int ptsMax  = max(ptsMin, (int)data.circle.nb_points_max);
 
-  for (int i = 0; i < nPoly; i++)
+  int   n  = data.circle.resolution;
+  int   nb = max(1, data.circle.count);
+
+  for (int j = 1; j <= nb; j++)
   {
-    int nPts = (int)random(ptsMin, ptsMax + 1);
-    Polyline seg = new Polyline();
-    for (int j = 0; j < nPts; j++)
+    float t  = (float)j / nb;                              // 0 (excluded) → 1
+    float r  = t * data.circle.circle_size / 2.0;
+    float rx = r * data.circle.aspect_ratio;
+    float ry = r / data.circle.aspect_ratio;
+
+    Polyline circle = new Polyline();
+    for (int i = 0; i <= n; i++)
     {
-      float a = random(TWO_PI);
-      seg.addPoint(new PVector(cos(a) * rx, sin(a) * ry));
+      float a = TWO_PI * i / n;
+      circle.addPoint(new PVector(cos(a) * rx, sin(a) * ry));
     }
-    lineGroup.add(seg);
+    lineGroup.add(circle);
   }
+
   file_ui.updateExportScale(lineGroup.getBoundingBox(data.page.clipping, data.page.clip_width, data.page.clip_height));
 }

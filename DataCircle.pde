@@ -5,33 +5,27 @@ class DataCircle extends GenericData
     super("Circle");
   }
 
-  float nb_polylines      = 20;
-  float nb_points_min     = 2;
-  float nb_points_max     = 10;
-  float circle_size       = 400;
-  float aspect_ratio      = 1.0;
-  int   seed              = 42;
+  float circle_size  = 400;
+  float aspect_ratio = 1.0;
+  int   resolution   = 128;
+  int   count        = 50;
 
   void LoadJson(JSONObject src)
   {
     if (src == null) return;
-    nb_polylines     = src.getFloat("nb_polylines",  nb_polylines);
-    nb_points_min    = src.getFloat("nb_points_min", nb_points_min);
-    nb_points_max    = src.getFloat("nb_points_max", nb_points_max);
-    circle_size      = src.getFloat("circle_size",   circle_size);
-    aspect_ratio     = src.getFloat("aspect_ratio",  aspect_ratio);
-    seed             = src.getInt("seed",             seed);
+    circle_size  = src.getFloat("circle_size",  circle_size);
+    aspect_ratio = src.getFloat("aspect_ratio", aspect_ratio);
+    resolution   = src.getInt("resolution",     resolution);
+    count        = src.getInt("count",          count);
   }
 
   JSONObject SaveJson()
   {
     JSONObject dest = new JSONObject();
-    dest.setFloat("nb_polylines",  nb_polylines);
-    dest.setFloat("nb_points_min", nb_points_min);
-    dest.setFloat("nb_points_max", nb_points_max);
-    dest.setFloat("circle_size",   circle_size);
-    dest.setFloat("aspect_ratio",  aspect_ratio);
-    dest.setInt("seed",            seed);
+    dest.setFloat("circle_size",  circle_size);
+    dest.setFloat("aspect_ratio", aspect_ratio);
+    dest.setInt("resolution",     resolution);
+    dest.setInt("count",          count);
     return dest;
   }
 }
@@ -41,11 +35,10 @@ class CircleGUI extends GUIPanel
 {
   DataCircle circle;
 
-  Slider nb_polylines;
-  Slider nb_points_min;
-  Slider nb_points_max;
   Slider circle_size;
   Slider aspect_ratio;
+  Slider resolution;
+  Slider count;
 
   CircleGUI(DataCircle circle)
   {
@@ -57,23 +50,18 @@ class CircleGUI extends GUIPanel
   {
     super.Init();
 
-    nb_polylines  = addSlider("nb_polylines",  "Nb Polylines",   1, 500);
+    circle_size  = addSlider("circle_size",  "Circle Size",   10, 2000);
+    aspect_ratio = addSlider("aspect_ratio", "Aspect Ratio", 0.1, 5.0);
     nextLine();
-    nb_points_min = addSlider("nb_points_min", "Pts Min",         2, 20);
-    nextLine();
-    nb_points_max = addSlider("nb_points_max", "Pts Max",         2, 20);
-    nextLine();
-    circle_size   = addSlider("circle_size",   "Circle Size",    50, 2000);
-    nextLine();
-    aspect_ratio  = addSlider("aspect_ratio",  "Aspect Ratio",  0.1, 5.0);
+    resolution   = addIntSlider("resolution", "Resolution",    8, 512);
+    count        = addIntSlider("count",       "Count",         1, 5000);
   }
 
   void setGUIValues()
   {
-    nb_polylines.setValue(circle.nb_polylines);
-    nb_points_min.setValue(circle.nb_points_min);
-    nb_points_max.setValue(circle.nb_points_max);
     circle_size.setValue(circle.circle_size);
     aspect_ratio.setValue(circle.aspect_ratio);
+    resolution.setValue(circle.resolution);
+    count.setValue(circle.count);
   }
 }

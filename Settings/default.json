@@ -1,9 +1,8 @@
 {
   "Circle": {
-    "aspect_ratio": 3.1543333530426025,
-    "seed": 42,
-    "nb_lines": 100,
-    "circle_size": 400
+    "aspect_ratio": 0.8186667561531067,
+    "circle_size": 142.6666717529297,
+    "resolution": 128
   },
   "Style": {
     "backgroundColor": -16777216,
