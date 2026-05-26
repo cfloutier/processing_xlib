@@ -21,8 +21,10 @@
 
 - **Connexion dans un sketch** — une ligne dans `setup()` après `setupControls()` :
   ```java
-  file_ui.export_group = lineGroup; // référence au PolylineGroup du sketch
+  file_ui.export_group  = lineGroup;    // PolylineGroup : spiral, perlin_mountains, image_lines
+  file_ui.export_shapes = shapesGroup;  // ShapesGroup   : image_dots (dots + polylines)
   ```
+  `export_shapes` a priorité sur `export_group`. Les deux sont null → fallback renderer Processing.
 
 - **Transform** : auto-centrage via bbox, scale `export_scale * (25.4/96)`, rotation -90deg optionnelle
 - **stroke_mm** = `data.style.lineWidth * export_scale * (25.4/96)`
@@ -30,5 +32,5 @@
 - **Adaptation par sketch (TODO)** :
   - `spiral`, `perlin_mountains` — vérifier nom du PolylineGroup dans le générateur
   - `image_lines` — `file_ui.export_group = generator.group;`
-  - `image_dots` — pas de PolylineGroup, fallback auto Processing SVG
+  - `image_dots` — `file_ui.export_shapes = shapesGroup;` (ShapesGroup avec dots)
   - `gravity` — non adapté à l'export pour l'instant
