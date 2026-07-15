@@ -1,11 +1,38 @@
 # xLib Sync Tools
 
-Tools to synchronize shared xLib files between three Processing projects (spiral, perlin_mountains, image_processor) and the centralized xlib repository.
+PowerShell tools to synchronize shared xLib files between Processing projects and the centralized xLib repository.
+
+## Quick start
+
+Use this section for day-to-day operations:
+
+```powershell
+# Pull xLib changes from one source project into processing_xlib
+.\pull-from-projects.ps1 spiral
+
+# Push xLib changes from processing_xlib to all projects
+.\push-to-projects.ps1 all
+
+# Safe preview mode (no file copy)
+.\pull-from-projects.ps1 spiral -dry
+.\push-to-projects.ps1 all -dry
+
+# Interactive menus
+.\pull-from-projects.ps1
+.\push-to-projects.ps1
+```
+
+Typical flow:
+
+1. Edit and test in one project.
+2. Pull into processing_xlib.
+3. Review and commit in processing_xlib.
+4. Push to all projects.
 
 ## Architecture
 
-```
-xlib/ (centralized repo - source of truth)
+```text
+processing_xlib/ (central repository - source of truth)
 ├── xLib_*.pde (shared files)
 ├── .git/
 └── sync-tools/
@@ -14,179 +41,172 @@ xlib/ (centralized repo - source of truth)
     ├── projects.ps1
     └── README.md
 
-spiral/, perlin_mountains/, image_processor/
+spiral/, perlin_mountains/, image_lines/, gravity/, image_dots/, image_contours/, curved_lines/
 ├── xLib_*.pde (synchronized copies)
 └── [other project files]
 ```
 
 ## Usage
 
-### Interface for Push and Pull
+### Push and pull behavior
 
-Both scripts have a similar interface but different scopes:
+Both scripts share a similar interface, but they operate differently:
 
-**Push xLib to projects** — Can target all projects:
+**Push xLib to projects** - can target all projects or one project.
+
 ```powershell
-.\push-to-projects.ps1 all              # Send xlib to all projects
-.\push-to-projects.ps1 spiral           # Send xlib to spiral only
-.\push-to-projects.ps1                  # Menu: 0=all, 1=spiral, 2=perlin_mountains, 3=image_processor
+.\push-to-projects.ps1 all                # Push xLib to every configured project
+.\push-to-projects.ps1 spiral             # Push xLib only to spiral
+.\push-to-projects.ps1                    # Interactive menu: 0=all, 1..N=single project
 ```
 
-**Pull from ONE unique project** — Always one project at a time:
+**Pull from one project** - always one project at a time.
+
 ```powershell
-.\pull-from-projects.ps1 spiral         # Pull from spiral to xlib
-.\pull-from-projects.ps1                # Menu: 1=spiral, 2=perlin_mountains, 3=image_processor
+.\pull-from-projects.ps1 spiral           # Pull from spiral to processing_xlib
+.\pull-from-projects.ps1                  # Interactive menu: choose one project
 ```
 
 ### Options
 
-- `-dry` : Dry run (shows what would be changed without making changes)
-- Any other parameter: returns an error
+- `-dry`: Dry run mode (shows what would change without copying files).
+- Any unknown project name or invalid choice returns an error.
 
 ### Examples
 
-**Push xlib to all projects:**
+**Push to all projects**
+
 ```powershell
 .\push-to-projects.ps1 all
 ```
 
-**Pull changes from a project to xlib:**
+**Pull from one project**
+
 ```powershell
-.\pull-from-projects.ps1 spiral          # Pull from spiral
-.\pull-from-projects.ps1                 # Interactive menu to choose project
+.\pull-from-projects.ps1 spiral
 ```
 
-**Interactive menu to choose:**
+**Use interactive mode**
+
 ```powershell
-.\push-to-projects.ps1              # Menu with "0. all" option
-.\pull-from-projects.ps1            # Menu with only projects (1, 2, 3)
+.\push-to-projects.ps1                    # Includes "0. all"
+.\pull-from-projects.ps1                  # One-project selection only
 ```
 
-**Simulate before executing (dry run):**
+**Preview changes first (dry run)**
+
 ```powershell
-.\push-to-projects.ps1 all -dry             # Shows what would be sent to all projects
-.\pull-from-projects.ps1 spiral -dry        # Shows what would be pulled from spiral
+.\push-to-projects.ps1 all -dry
+.\pull-from-projects.ps1 spiral -dry
 ```
 
-**Error if invalid parameter:**
-```powershell
-.\push-to-projects.ps1 -badparam       # ✗ ERROR: Parameter not found
-```
+## Recommended workflow
 
-## Recommended Workflow
-
-### When you modify xLib in a project:
+### When you modify xLib inside a project
 
 ```powershell
-# 1. Test the changes in the project
-# (edit and test in spiral/, perlin_mountains/ or image_processor/)
+# 1) Edit and test inside the source project
 
-# 2. Pull the project changes back to the xlib repo
-# Note: pull-from-projects works with ONE project at a time
-.\pull-from-projects.ps1 spiral          # Pull from spiral to xlib
+# 2) Pull changes back to processing_xlib (one project at a time)
+.\pull-from-projects.ps1 spiral
 
-# 3. Commit to the xlib repo
-cd C:\dev\__tracer\processing\xlib
+# 3) Review and commit from processing_xlib
+cd C:\dev\__tracer\processing\processing_xlib
 git add xLib_*.pde
 git commit -m "Update xLib: description of changes"
 git push
 ```
 
-### When there are changes in xlib to distribute:
+### When you need to distribute xLib changes
 
 ```powershell
-# Send xlib to all projects
-# Note: push-to-projects can send to "all" (everyone) or a specific project
-.\push-to-projects.ps1 all          # Send to all projects
-# or for a specific project:
-.\push-to-projects.ps1 spiral       # Send to spiral only
+# Push to every configured project
+.\push-to-projects.ps1 all
+
+# Or push to a single project
+.\push-to-projects.ps1 spiral
 ```
 
-### Adding a new project:
+### Add a new project
 
 If you add a new Processing project that depends on xLib:
 
-1. Add its name to `projects.ps1` in `$projectNames`
-2. The path is constructed automatically
-3. The scripts recognize the new project immediately
+1. Add the project name to `$projectNames` in `projects.ps1`.
+2. Keep the folder name identical to the project name.
+3. The scripts will include it automatically in their menus.
 
-## How It Works
+## How it works
 
-The scripts use **SHA256 hash** comparison to automatically detect changes:
+The scripts use SHA256 hashes to detect changes by content:
 
-- **push-to-projects.ps1** : Sends xlib TO projects (can target all or a single one)
-  - Menu: `0. all` (all projects) + `1-3` (individual projects)
-  - Compares xlib repo files with those of selected projects
-  - If different → asks for confirmation before copying
-  - If identical → nothing to do
+- **push-to-projects.ps1**: copies from processing_xlib to one or more projects.
+- **pull-from-projects.ps1**: copies from one selected project to processing_xlib.
 
-- **pull-from-projects.ps1** : Retrieves from projects TO xlib (always ONE ONLY)
-  - Menu: `1-3` (individual projects only, no "all" option)
-  - Compares a project's files with those in the xlib repo
-  - If different → asks for confirmation before copying to xlib
-  - If identical → nothing to do
-  
-**Why does pull only accept one project?** 
-- Prevents merge conflicts
-- You consciously decide which project is the source of truth
-- Pull from one project → commit → push to xlib repo (clean workflow)
+If hashes are identical, nothing is copied.
 
-## Configuration Files
+### Why pull is one-project-only
+
+- It avoids accidental merge conflicts.
+- It keeps the source of truth explicit for each pull operation.
+- It enforces a clean flow: pull from one project, review, commit, then push.
+
+## Configuration
 
 ### `projects.ps1`
 
-Centralized configuration file for the list of dependent projects. **Update ONLY when the project list changes.**
+Central configuration file for project names. Update it only when the project list changes.
 
 ```powershell
-$projectNames = @("spiral", "perlin_mountains", "image_processor")
+$projectNames = @(
+    "spiral",
+    "perlin_mountains",
+    "image_lines",
+    "gravity",
+    "image_dots",
+    "image_contours",
+    "curved_lines"
+)
 
-# Paths are constructed automatically from names
+# Paths are built automatically from project names
 $projectPaths = @{}
 $projectNames | ForEach-Object { $projectPaths[$_] = Join-Path $processingDir $_ }
 ```
 
-**Ajouter un nouveau projet:**
-1. Ajouter simplement le nom à `$projectNames` (dans l'ordre souhaité)
-2. Le chemin se construit automatiquement (le dossier doit avoir le même nom que le projet)
-3. Les scripts reconnaissent immédiatement le nouveau projet dans le menu
+## Managed files
 
-## Fichiers gérés
+The scripts automatically synchronize every file matching `xLib_*.pde`, regardless of how many files exist.
 
-Les scripts synchronisent automatiquement **tous les fichiers** correspondant à `xLib_*.pde`, peu importe combien il y en a. Pas besoin de modifier les scripts si de nouveaux xLib_*.pde sont ajoutés.
-
-Actuellement (v2.2.11):
-- xLib_ClippingUtils.pde
-- xLib_ColorRef.pde
-- xLib_DataGlobal.pde
-- xLib_ExportUtils.pde
-- xLib_FileUI.pde
-- xLib_GenericData.pde
-- xLib_GenericDataList.pde
-- xLib_GUIPanel.pde
-- xLib_KeyMoves.pde
-- xLib_MainPanel.pde
-- xLib_MyPerlin.pde
-- xLib_Polyline.pde
-- xLib_StringUtils.pde
-- xLib_Style.pde
-- xLib_version.pde
+No script change is required when new `xLib_*.pde` files are added.
 
 ## Notes
 
-- Les scripts sont **non-destructifs** : ils proposent une confirmation avant d'agir
-- Utilise `-dry` pour prévisualiser sans risque
-- Les fichiers sont comparés par contenu (hash), pas par date de modification
-- Les fichiers d'export/résultats ne sont jamais synchronisés (seulement les xLib_*.pde)
+- The scripts are non-destructive and compare content before copying.
+- Use `-dry` to safely preview operations.
+- Files are compared by hash (content), not by last modified date.
+- Export outputs and generated artifacts are not part of the sync; only `xLib_*.pde` files are handled.
 
 ## Troubleshooting
 
-**Erreur: "Project not found"**
-- Vérifier que le nom du projet est correct (spiral, perlin_mountains, image_processor)
+**Error: "Unknown project" or "Project not found"**
 
-**Erreur: "Missing files in xlib repo"**
-- Le repo xlib n'a pas encore tous les xLib_*.pde
-- Faire un push depuis un projet d'abord
+- Check the project name in `projects.ps1`.
+- Make sure the target project folder exists under the Processing root directory.
 
-**Script ne s'exécute pas**
-- Vérifier: `Get-ExecutionPolicy`
-- Si restreint, autoriser temporairement: `Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process`
+**Error: "Missing files in xlib repo"**
+
+- `processing_xlib` may not contain all expected `xLib_*.pde` files yet.
+- Pull from the correct source project first.
+
+**Script does not run**
+
+- Check PowerShell execution policy:
+
+```powershell
+Get-ExecutionPolicy
+```
+
+- If needed, allow script execution for the current session only:
+
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
+```
