@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls \"C:\\\\Users\\\\cfloutier\\\\.claude\\\\projects\\\\\" 2>/dev/null)",
+      "Read(//c/Users/cfloutier/.claude/projects\" 2>/dev/**)",
+      "Read(//c/Users/cfloutier/.claude/projects/**)",
+      "Bash(git -C \"c:/dev/claude_sandbox/processing/processing_xlib\" log --oneline -5 --all -- .)",
+      "Bash(git -C \"c:/dev/claude_sandbox/processing/processing_xlib\" show --stat b2d6ba8)",
+      "Read(//c/Users/cfloutier/.claude/projects/c--dev-claude-sandbox-processing-processing-xlib/**)"
+    ]
+  }
+}
