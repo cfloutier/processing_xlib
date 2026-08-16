@@ -18,7 +18,7 @@ String get_xlib_version()
    xlib3d_Camera3D.pde / xlib3d_CameraData.pde / xlib3d_Mesh.pde (class names unchanged - .pde
    tab names don't need to match their class in Processing) so they fall outside the xLib_*.pde
    glob the sync scripts match on and stop being synced anywhere; deleted from every other project
-   and from this repo. No sync-tools script changes needed - filtering is purely by filename.
+   and from processing_xlib. No sync-tools script changes needed - filtering is purely by filename.
 
  ## [3.11.2] - 2026-08-16
  - xLib_FileUI: added bringNativeFileDialogToFront(), called after selectInput()/selectOutput()
