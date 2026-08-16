@@ -1,12 +1,24 @@
 String get_xlib_version()
 {
-  return "3.11.1";
+  return "3.11.2";
 }
 
 
 /*
 
  # CHANGELOG
+
+ ## [3.11.2] - 2026-08-16
+ - xLib_FileUI: added bringNativeFileDialogToFront(), called after selectInput()/selectOutput()
+   in LoadJson()/SaveJson() (and xLib_Image.SelectSourceImage()) — works around a Processing/JOGL
+   quirk seen on trace_3d (P3D renderer) where the native file dialog opens behind the main
+   window (which can auto-minimize) instead of getting focus; not observed with the default
+   (non-OpenGL) renderer used by 2D projects like image_lines. Polls briefly (up to ~6s) for the
+   dialog window via java.awt.Window.getWindows() and forces it to front/focus once AWT creates it.
+   Fixes every LoadJson()/SaveJson() call except the very first one of a run (tried a
+   warmupNativeFileDialog() companion to pre-create AWT's native FileDialog peer at setup()
+   time on the theory that peer creation itself was racing with JOGL - didn't help, reverted;
+   first-call cause still unknown, left as a known minor quirk).
 
  ## [3.11.1] - 2026-08-16
  - xLib_ExportUtils: writeSVGDirect() (both overloads) reads file_ui.export_landscape instead of recomputing its
